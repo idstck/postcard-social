@@ -5,10 +5,25 @@ import { FcGoogle } from 'react-icons/fc';
 import postCard from '../assets/postcard.mp4';
 import logo from '../assets/logo-light.png';
 
+import { client } from '../client'
+
 const Login = () => {
+  const navigate = useNavigate();
   const responseGoogle = (res) => {
-    console.log(res)
+    localStorage.setItem('user', JSON.stringify(res.profileObj));
+    const { name, googleId, imageUrl } = res.profileObj;
+    const doc = {
+        _id: googleId,
+        _type: 'user',
+        userName: name,
+        image: imageUrl
+    }
+    client.createIfNotExists(doc)
+        .then((result) => {
+            navigate('/', { replace: true })
+        })
   }
+
   return (
     <div className='flex justify-start items-center flex-col h-screen'>
         <div className='relative w-full h-full'>
